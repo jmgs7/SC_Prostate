@@ -1,5 +1,5 @@
 #' @title ViolinPlotGradient
-#' @description `ViolinPlotGradient()` extends `Seurat::VlnPlot()` functionality
+#' @description `VlnPlotGradient()` extends `Seurat::VlnPlot()` functionality
 #'   by coloring each violin plot with a gradient based on the per-identity value
 #'   of a given feature. Particularly useful for visualizing QC metrics (nCount_RNA,
 #'   nFeature_RNA, percent.mt) simultaneously while coloring by number of cells per
@@ -30,13 +30,13 @@
 #' @return A \code{ggplot2} / \code{patchwork} object.
 #'
 #' @examples
-#' ViolinPlotGradient(
+#' VlnPlotGradient(
 #'   SeuratObject,
 #'   features = c("nFeature_RNA", "nCount_RNA", "percent.mt"),
 #'   gradient = "nCells"
 #' )
 #'
-#' ViolinPlotGradient(
+#' VlnPlotGradient(
 #'   SeuratObject,
 #'   features = c("CD3D", "CD8A"),
 #'   gradient = "nCount_RNA",
@@ -48,8 +48,7 @@
 #' @import ggplot2
 #' @import dplyr
 #' @import patchwork
-#' @importFrom Seurat Idents
-#' @importFrom viridis scale_color_viridis_c
+#' @import Seurat
 #' @noRd
 
 ViolinPlotGradient <- function(
@@ -167,7 +166,7 @@ ViolinPlotGradient <- function(
       } +
 
       # Viridis gradient fill for violins
-      viridis::scale_fill_viridis_c(
+      ggplot2::scale_fill_viridis_c(
         name     = gradient_label,
         option   = scale.colors,
         limits   = scale_limits,
@@ -175,7 +174,7 @@ ViolinPlotGradient <- function(
       ) +
 
       # Matching color scale for points
-      viridis::scale_color_viridis_c(
+      ggplot2::scale_color_viridis_c(
         option = scale.colors,
         limits = scale_limits,
         guide  = "none"
@@ -185,7 +184,7 @@ ViolinPlotGradient <- function(
       ggplot2::labs(
         title = feat,
         x     = NULL,
-        y     = "Expression Level"
+        y     = NULL
       ) +
 
       # Seurat-inspired theme
