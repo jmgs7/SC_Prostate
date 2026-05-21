@@ -1,7 +1,5 @@
-# This module contains the FeatureScatterGradient function.
-
 #' @title FeatureScatterGradient 
-#' @description `FeatureScatterGradient()` adds the functionality over Seurat::FeatureScatter to color the dots according a gradient determined by the value of another feature. This results very useful for visualizing QC parameters such as read count, feature count and % of mitochondrial genes simultaneously.
+#' @description `FeatureScatterGradient()` adds the functionality over `Seurat::FeatureScatter()` to color the dots according a gradient determined by the value of another feature. This results very useful for visualizing QC parameters such as read count, feature count and % of mitochondrial genes simultaneously.
 #' @param SeuratObject The Seurat data.
 #' @param feature1 The feature to represent on x axis.
 #' @param feature2: The feature to represent on y axis.
