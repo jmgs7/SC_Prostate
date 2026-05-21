@@ -63,7 +63,7 @@ ViolinPlotGradient <- function(
     ncol         = NULL
 ) {
 
-  # ── 1. Resolve identity ───────────────────────────────────────────────────────────
+  # ── 1. Resolve identity ──────────────────────────────────────────────────────────────────────
   # If group.by is provided, temporarily set the active identity to that column.
   # This mirrors Seurat::VlnPlot() behaviour exactly.
   original_idents <- NULL
@@ -76,10 +76,8 @@ ViolinPlotGradient <- function(
   }
   # Capture the identity labels for each cell
   cell_idents <- as.character(Seurat::Idents(SeuratObject))
-  ident_levels <- levels(Seurat::Idents(SeuratObject))
-  if (is.null(ident_levels)) ident_levels <- unique(cell_idents)
 
-  # ── 2. Compute per-identity gradient value ────────────────────────────────────────────
+  # ── 2. Compute per-identity gradient value ───────────────────────────────────────────────────────
   if (gradient == "nCells") {
     # Special case: count cells per identity using dplyr
     ident_df <- data.frame(identity = cell_idents, stringsAsFactors = FALSE)
@@ -106,12 +104,22 @@ ViolinPlotGradient <- function(
     gradient_label <- paste0("mean(", gradient, ")")
   }
 
-  # ── 3. Restore original identity if changed ─────────────────────────────────────────────
+  # ── 2b. Order identities by gradient value descending ──────────────────────────────────────────
+  # Sort the gradient table so the identity with the highest gradient value comes
+  # first. The resulting order vector is used as the factor level order in ggplot,
+  # which controls the left-to-right position of violins on the x-axis.
+  gradient_values <- gradient_values %>%
+    dplyr::arrange(dplyr::desc(gradient_val))
+
+  # Ordered identity levels (high → low gradient, left → right on x-axis)
+  ordered_levels <- gradient_values$identity
+
+  # ── 3. Restore original identity if changed ─────────────────────────────────────────────────────
   if (!is.null(original_idents)) {
     Seurat::Idents(SeuratObject) <- original_idents
   }
 
-  # ── 4. Build per-feature violin plots ──────────────────────────────────────────────
+  # ── 4. Build per-feature violin plots ─────────────────────────────────────────────────────────────
   # Fetch feature data for all requested features at once
   feat_matrix <- tryCatch(
     Seurat::FetchData(SeuratObject, vars = features),
@@ -128,9 +136,9 @@ ViolinPlotGradient <- function(
   # Build one ggplot per feature
   plot_list <- lapply(features, function(feat) {
 
-    # Per-cell data frame
+    # Per-cell data frame; factor levels set to gradient-descending order
     cell_df <- data.frame(
-      identity  = factor(cell_idents, levels = ident_levels),
+      identity  = factor(cell_idents, levels = ordered_levels),
       value     = feat_matrix[[feat]],
       stringsAsFactors = FALSE
     )
@@ -216,7 +224,7 @@ ViolinPlotGradient <- function(
     return(p)
   })
 
-  # ── 5. Combine panels using patchwork ─────────────────────────────────────────────────
+  # ── 5. Combine panels using patchwork ──────────────────────────────────────────────────────────────────
   # Share a single colour legend across all panels (collect_guides)
   n_cols <- if (!is.null(ncol)) ncol else length(features)
 
