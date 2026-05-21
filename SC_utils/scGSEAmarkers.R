@@ -1,10 +1,5 @@
-#' Calculates GSEA for all the clusters in a SeruatObject.
-#'
-#' Given the output from Seurat::FindAllMarkers(), calculate the GSEA for all clusters
-#' given a GSEA database. For example, use MSigDB C8 dataset to calculate enrichment
-#' for cell identity markers. This is intended to be a helper for manual annotation of
-#' the clusters.
-#'
+#' @title scGSEAmarkers
+#' @description Calculates GSEA for all the clusters in a SeruatObject. Given the output from Seurat::FindAllMarkers(), calculate the GSEA for all clusters given a GSEA database. For example, use MSigDB C8 dataset to calculate enrichment for cell identity markers. This is intended to be a helper for manual annotation of the clusters.
 #' @param cluster_markers A data.frame containing the DE markers for multiple clusters
 #' from a SC experiment (i.e. a SeuratObject). Expects the output from Seurat::FindAllMarkers.
 #' @param reference_markers A GSEA database loaded for fgsea input (see fgsea documentation).
@@ -14,27 +9,11 @@
 #' @return A list containing the GSEA for each cluster.
 #' @examples
 #' SeuratObject <- CalculateCDR(SeuratObject)
-#' @export
-
-
+#' @import dplyr
+#' @import fgsea
+#' @noRd
 
 scGSEAmarkers <- function(cluster_markers, reference_markers, padj.threshold=1e-6, only.pos=TRUE, workers=4) {
-
-  if (!require("dplyr", character.only = TRUE)) {
-    cat("Require package dplyr not found, trying to install...\n")
-    install.packages(c("dplyr"))
-    if (!require(c("dplyr"), character.only = TRUE)) {
-      stop("Required package dplyr not found")
-    }
-  }
-
-  if (!require("fgsea", character.only = TRUE)) {
-    cat("Require package fgsea not found, trying to install...\n")
-    install.packages(c("fgsea"))
-    if (!require(c("fgsea"), character.only = TRUE)) {
-      stop("Required package fgsea not found")
-    }
-  }
 
   result <- list()
   cluster_list <- as.character(unique(cluster_markers$cluster))

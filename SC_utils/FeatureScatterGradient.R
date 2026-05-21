@@ -1,43 +1,32 @@
 # This module contains the FeatureScatterGradient function.
 
+#' @title FeatureScatterGradient 
+#' @description `FeatureScatterGradient()` adds the functionality over Seurat::FeatureScatter to color the dots according a gradient determined by the value of another feature. This results very useful for visualizing QC parameters such as read count, feature count and % of mitochondrial genes simultaneously.
+#' @param SeuratObject The Seurat data.
+#' @param feature1 The feature to represent on x axis.
+#' @param feature2: The feature to represent on y axis.
+#' @param gradient: The feature which values will be used to set the color gradient.
+#' @param scale.colors = Color pallette to use in the gradient. Corresponds to the color palletes codes included in scale_gradient_viridis:
+#'     "magma" (or "A")
+#'     "inferno" (or "B")
+#'     "plasma" (or "C")
+#'     "viridis" (or "D")
+#'     "cividis" (or "E")
+#'     "rocket" (or "F")
+#'     "mako" (or "G")
+#'     "turbo" (or "H")
+#' @param lower.limit: Lower limit of the gradient. Default is 0. Only applicable when upper.limit is specified.
+#' @param upper.limit: Upper limit of the gradient. When not specified, the gradient limits are automatically set.
+#' @examples 
+#' FeatureScatterGradient(SeuratObject, feature1="nCounts", feature2="nFeatures", gradient="percent.mt", upper.limit = 100, lower.limit = 0, scale.colors = "viridis")
+#' @import Seurat
+#' @import ggplot2
+#' @noRd
+
 FeatureScatterGradient <- function(
     SeuratObject, feature1, feature2, gradient, upper.limit = NULL,
     lower.limit = 0, scale.colors = "viridis"
     ) {
-
-  # FeatureScatterGradient adds the functionality over Seurat::FeatureScatter
-  # to color the dots according a gradient determined by the value of another
-  # feature. This results very useful for visualizing QC parameters such as
-  # read count, feature count and % of mitochondrial genes simultaneously.
-
-  # SeuratObject: The Seurat data.
-  # feature1: The feature to represent on x axis.
-  # feature2: The feature to represent on y axis.
-  # gradient: The feature which values will be used to set the color gradient.
-  # scale.colors = Color pallette to use in the gradient. Corresponds to the
-  # color palletes codes included in scale_gradient_viridis:
-  #     "magma" (or "A")
-  #     "inferno" (or "B")
-  #     "plasma" (or "C")
-  #     "viridis" (or "D")
-  #     "cividis" (or "E")
-  #     "rocket" (or "F")
-  #     "mako" (or "G")
-  #     "turbo" (or "H")
-  # lower.limit:Lower limit of the gradient. Default is 0. Only applicable when
-  # upper.limit is specified.
-  # upper.limit: Upper limit of the gradient. When not specified, the gradient
-  # limits are automatically set.
-
-  # Checks if ggplot2 if install with require and if not, tries to install it.
-  # If installation fails, the function is stopped.
-  if (!require("ggplot2", character.only = TRUE)) {
-    cat("Package ggplot2 not found, trying to install...\n")
-    install.packages("ggplot2")
-    if (!require("ggplot2", character.only = TRUE)) {
-      stop("Package ggplot2 not found.")
-    }
-  }
 
   df = data.frame(
     SeuratObject[[feature1]], SeuratObject[[feature2]], SeuratObject[[gradient]]
