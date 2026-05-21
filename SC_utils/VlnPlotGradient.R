@@ -1,4 +1,4 @@
-#' @title ViolinPlotGradient
+#' @title VlnPlotGradient
 #' @description `VlnPlotGradient()` extends `Seurat::VlnPlot()` functionality
 #'   by coloring each violin plot with a gradient based on the per-identity value
 #'   of a given feature. Particularly useful for visualizing QC metrics (nCount_RNA,
@@ -30,6 +30,7 @@
 #' @return A \code{ggplot2} / \code{patchwork} object.
 #'
 #' @examples
+#' \dontrun{
 #' VlnPlotGradient(
 #'   SeuratObject,
 #'   features = c("nFeature_RNA", "nCount_RNA", "percent.mt"),
@@ -44,14 +45,16 @@
 #'   scale.colors = "plasma",
 #'   upper.limit = 5000
 #' )
+#'}
 #'
 #' @import ggplot2
 #' @import dplyr
 #' @import patchwork
 #' @import Seurat
-#' @noRd
+#' 
+#' @export
 
-ViolinPlotGradient <- function(
+VlnPlotGradient <- function(
     SeuratObject,
     features,
     gradient,
