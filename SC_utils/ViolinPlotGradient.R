@@ -136,16 +136,16 @@ ViolinPlotGradient <- function(
   # Build one ggplot per feature
   plot_list <- lapply(features, function(feat) {
 
-    # Per-cell data frame; factor levels set to gradient-descending order
+    # Per-cell data frame; join gradient values first as plain character,
+    # then re-apply the ordered factor AFTER the join to prevent left_join()
+    # from silently dropping the factor class and reverting to alphabetical order.
     cell_df <- data.frame(
-      identity  = factor(cell_idents, levels = ordered_levels),
-      value     = feat_matrix[[feat]],
+      identity = cell_idents,
+      value    = feat_matrix[[feat]],
       stringsAsFactors = FALSE
-    )
-
-    # Merge gradient colour value onto per-cell data
-    cell_df <- cell_df %>%
-      dplyr::left_join(gradient_values, by = "identity")
+    ) %>%
+      dplyr::left_join(gradient_values, by = "identity") %>%
+      dplyr::mutate(identity = factor(identity, levels = ordered_levels))
 
     # ── ggplot2 violin, styled to resemble Seurat::VlnPlot() ─────────────────
     p <- ggplot2::ggplot(cell_df,
