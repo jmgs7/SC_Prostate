@@ -57,7 +57,7 @@
 VlnPlotGradient <- function(
     SeuratObject,
     features,
-    gradient,
+    gradient = "nCells",
     group.by     = NULL,
     scale.colors = "viridis",
     lower.limit  = 0,
@@ -222,7 +222,19 @@ VlnPlotGradient <- function(
         ),
         panel.border       = ggplot2::element_blank(),
         axis.line          = ggplot2::element_line(linewidth = 0.4)
-      )
+      ) +
+      
+      { if (bloxplot) {
+        ggplot2::geom_boxplot(
+          ggplot2::aes(x = identity, y = value),
+          fill     = "white",
+          color    = "black",
+          linewidth = 0.3,
+          outlier.shape = NA
+        )
+      } }
+    
+    geom_boxplot(width = 0.1)
 
     return(p)
   })
